@@ -61,6 +61,28 @@ def store_book_info(book_isbn):
 
     return "",200
 
+@main.route('/api/v1/assessment/get_books', methods=['GET','OPTIONS'])
+def get_books():
+
+    if request.method == 'GET':
+
+        code = 200
+        
+        book_list=None
+        if request.headers.get('Content-Type'):
+            book_list = request.json.get('books')
+
+        if book_list:
+            books = Book.query.filter(Book.isbn.in_(book_list)).all()
+        else:
+            books = Book.query.all()
+
+        return jsonify([book.info for book in books]),code
+
+
+    return "",200
+
+
 @main.route('/api/v1/assessment/book_comments_management/<string:book_isbn>', methods=['GET','PUT','DELETE','OPTIONS'])
 def book_comments_management(book_isbn):
 
