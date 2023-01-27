@@ -2,10 +2,15 @@ from flask import Blueprint, request, jsonify
 from src.extensions import db
 from src.models import Book
 import requests
+import os
+import logging
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(name)s %(levelname)s %(message)s')
+logger = logging.getLogger('models_main')
 
 main = Blueprint('main', __name__)
 
-BOOK_API="https://openlibrary.org/isbn/"
+BOOK_API_URL=os.getenv('BOOK_API_URL') or "https://openlibrary.org/isbn/"
 
 @main.route('/api/v1/assessment/get_book_info/<string:book_isbn>', methods=['GET','OPTIONS'])
 def get_book_info(book_isbn):
@@ -13,21 +18,22 @@ def get_book_info(book_isbn):
     if request.method == 'GET':
 
         code = 404
-        reply = {"The book doesn't exist on the database"}
+        reply = f"Could not retrieve the info of the book with ISBN <{book_isbn}>"
         
         book_stored = Book.query.filter(Book.isbn == book_isbn).first()
 
         if book_stored:
             code = 200
             reply = book_stored.info 
+            logging.debug(f"Retrieve info of the book with ISBN <{book_isbn}> from the database")
         else:
-            url = f"{BOOK_API}/{book_isbn}.json"
+            url = f"{BOOK_API_URL}/{book_isbn}.json"
             try:
                 book_info = requests.get(url)
                 code = 200
                 reply = book_info.json()
             except:
-                print("ERROR")
+                logging.error(f"Could not get the info for the book with ISBN <{book_isbn}> from the URL <{url}>")
             
         return jsonify(reply),code
 
@@ -35,6 +41,9 @@ def get_book_info(book_isbn):
 
 @main.route('/api/v1/assessment/store_book_info/<string:book_isbn>', methods=['POST','OPTIONS'])
 def store_book_info(book_isbn):
+
+    code = 200
+    reply = f"Book with ISBN <{book_isbn}> stored succesfully on the database"
 
     if request.method == 'POST':
 
@@ -52,12 +61,16 @@ def store_book_info(book_isbn):
                 db.session.add(book)
                 db.session.commit()
             except:
-                print('ERROR trying to store the book info on the DB' )
+                logging.error(f"Couldn't store the book with ISBN <{book_isbn}> on the database")
+                code = 503
+                reply = f"Could not store book book with ISBN <{book_isbn}> on the database"
+
 
         else:
-            print('ERROR: ISBN already exists on the DB')
+            logging.debug(f"The book with ISBN <{book_isbn}> already exists on the database")
+            reply = f"Book with ISBN <{book_isbn}> already exists on the database"
 
-        return jsonify("Done"),200
+        return jsonify(reply),code
 
     return "",200
 
@@ -101,8 +114,8 @@ def book_comments_management(book_isbn):
             code = 200
             reply = 'Success update of the comment in the book'
         except:
-            reply = 'ERROR trying to update the comment of the book on the DB'
-            print(reply)
+            reply = 'ERROR trying to update the comment of the book on the database'
+            logging.error(f"Couldn't update the comments of the book with ISBN <{book_isbn}> on the database")
 
         return jsonify(reply),code
 
@@ -120,7 +133,7 @@ def book_comments_management(book_isbn):
             reply = 'Success deleting the comment of the book'
         except:
             reply = 'ERROR trying to delete the comment of the book'
-            print(reply)
+            logging.error(f"Couldn't delete the comments of the book with ISBN <{book_isbn}> on the database")
 
         return jsonify(reply),code
 
