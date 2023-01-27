@@ -34,9 +34,37 @@ This Flask application needs a SQLite database to store data. The database shoul
 
 Run development server to serve the Flask application:
 
+(venv) $ cd src/
 (venv) $ flask run
 
-Navigate to 'http://127.0.0.1:5000' in your favorite web browser to view the website!
+To get book information use the folloiing instruction:
+curl http://127.0.0.1:5000/api/v1/assessment/get_book_info/<book_isbn>'
+
+Or navigate to 'http://127.0.0.1:5000/api/v1/assessment/get_book_info/<book_isbn>'
+
+To store book information use the following instruction:
+
+curl http://127.0.0.1:5000/api/v1/assessment/store_book_info/<book_isbn> -X PUT -H "Content-Type: application/json" -d '{"book_info":{"book title":"book1"},"comments":"first comment"}'
+
+To get book information of a specific list of book, use:
+
+curl http://127.0.0.1:5000/api/v1/assessment/get_books -X GET -H "Content-Type: application/json" -d '{"books":[<book_isbn1>,<book_isbn2>,...]}'
+
+To get book information of the complete list of books in the database, use:
+
+curl http://127.0.0.1:5000/api/v1/assessment/get_books -X GET
+
+To update a comment use the following instruction:
+
+curl http://127.0.0.1:5000/api/v1/assessment/book_comments_management/<book_isbn> -X PUT -H "Content-Type: application/json" -d '{"book_comments": "coment"}'      
+
+To get a comment, use:
+
+curl http://127.0.0.1:5000/api/v1/assessment/book_comments_management/<book_isbn> -X GET      
+
+To delete a comment, use:
+
+curl http://127.0.0.1:5000/api/v1/assessment/book_comments_management/<book_isbn> -X DELETE      
 
 # Testing
 To run all the tests:
