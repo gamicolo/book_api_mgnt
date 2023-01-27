@@ -30,7 +30,7 @@ def get_book_info(book_isbn):
             url = f"{BOOK_API_URL}/{book_isbn}.json"
             try:
                 book_info = requests.get(url)
-                code = 200
+                code = book_info.status_code
                 reply = book_info.json()
             except:
                 logging.error(f"Could not get the info for the book with ISBN <{book_isbn}> from the URL <{url}>")
