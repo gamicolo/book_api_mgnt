@@ -67,8 +67,8 @@ def store_book_info(book_isbn):
 
 
         else:
-            logging.debug(f"The book with ISBN <{book_isbn}> already exists on the database")
-            reply = f"Book with ISBN <{book_isbn}> already exists on the database"
+            logging.debug(f"The book with ISBN <{book_isbn}> already exist on the database")
+            reply = f"Book with ISBN <{book_isbn}> already exist on the database"
 
         return jsonify(reply),code
 
@@ -112,7 +112,7 @@ def book_comments_management(book_isbn):
         try:
             db.session.commit()
             code = 200
-            reply = 'Success update of the comment in the book'
+            reply = 'Success updating the comment in the book'
         except:
             reply = 'ERROR trying to update the comment of the book on the database'
             logging.error(f"Couldn't update the comments of the book with ISBN <{book_isbn}> on the database")
