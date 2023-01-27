@@ -7,7 +7,7 @@ This Flask application contains basic book management functionality (get and sto
 # Installation Instructions
 
 ## Installation
-Pull down the source code from this GitLab repository:
+Pull down the source code from this GitHub repository:
 
 ```sh
 $ git clone https://github.com/gamicolo/book_api_mgnt
@@ -37,6 +37,7 @@ Install the python packages specified in requirements.txt:
 This Flask application needs a SQLite database to store data. The database should be initialized using:
 
 ```sh
+(venv) $ cd src/
 (venv) $ flask create_tables
 ```
 
@@ -93,14 +94,14 @@ curl http://127.0.0.1:5000/api/v1/assessment/book_comments_management/<book_isbn
 ```
 
 # Testing
-To run all the tests:
+To run all the tests, use the following instruction (from the root path of the proyect: book_api_mgnt/):
 
 ```sh
-(venv) $ python -m pytest -v
+(venv) $ python3 -m pytest -v
 ```
 
 To check the code coverage of the tests:
 
 ```sh
-(venv) $ python -m pytest --cov-report term-missing --cov=project
+(venv) $ python3 -m pytest --cov-report term-missing --cov=project
 ```
