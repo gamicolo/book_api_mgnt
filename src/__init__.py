@@ -7,6 +7,8 @@ from .routes.main import main
 
 def create_app(config_file='settings.py'):
 
+    """ Creates and returns a Flask application using the application factory pattern """
+
     app = Flask(__name__)
     app.config.from_pyfile(config_file)
 
